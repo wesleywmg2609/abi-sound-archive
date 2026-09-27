@@ -2,7 +2,7 @@
 
 Browse recovered artifacts and listen to their unique sounds through a responsive web player.
 
-## [Open the ABI Sound Archive](https://wesleywmg2609.github.io/abi-sound-player/)
+## [Open the ABI Sound Archive](https://wesleywmg2609.github.io/abi-sound-archive/)
 
 ## Features
 

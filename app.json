@@ -1,12 +1,12 @@
 {
   "expo": {
     "name": "ABI Sound Archive",
-    "slug": "abi-sound-player",
+    "slug": "abi-sound-archive",
     "version": "1.0.0",
     "orientation": "default",
     "userInterfaceStyle": "dark",
     "experiments": {
-      "baseUrl": "/abi-sound-player"
+      "baseUrl": "/abi-sound-archive"
     },
     "web": {
       "bundler": "metro",

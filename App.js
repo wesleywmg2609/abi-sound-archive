@@ -14,7 +14,7 @@ import {
 import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 
 import metadata from "./metadata.json";
-import { audio, images } from "./assets";
+import { images, sounds } from "./asset-map";
 
 const palette = {
   ink: "#f5eee5",
@@ -29,7 +29,94 @@ const palette = {
   gold: "#e8bd68"
 };
 
-const typeNames = Object.fromEntries(metadata.types.map((type) => [type.id, type.name]));
+const soundGroups = [...new Set(metadata.items.map((item) => item.audio))]
+  .sort((a, b) => Number(a) - Number(b));
+const typesById = Object.fromEntries(metadata.types.map((type) => [type.id, type]));
+const itemSizes = [...new Map(metadata.items.map((item) => {
+  const id = `${item.size.width}x${item.size.height}`;
+  return [id, { id, name: `${item.size.width} × ${item.size.height}` }];
+})).values()].sort((a, b) => {
+  const [aWidth, aHeight] = a.id.split("x").map(Number);
+  const [bWidth, bHeight] = b.id.split("x").map(Number);
+  return aWidth - bWidth || aHeight - bHeight;
+});
+const translations = {
+  en: {
+    brandSub: "ANOMALOUS BROADCAST INDEX",
+    archiveOnline: "ARCHIVE ONLINE",
+    collectionLabel: "RED COLLECTION / SOUND GROUPS",
+    heroLead: "Sounds from the",
+    heroAccent: "other side.",
+    heroBody: "Browse recovered artifacts and preview their pickup and drop sounds. Headphones recommended.",
+    artifacts: "ARTIFACTS",
+    soundGroups: "SOUND GROUPS",
+    rarity: "RED",
+    searchLabel: "Search archive",
+    searchPlaceholder: "Search the archive",
+    clearSearch: "Clear search",
+    category: "CATEGORY",
+    sound: "Sound",
+    size: "Size",
+    allCategories: "All Categories",
+    allSounds: "All Sounds",
+    allSizes: "All Sizes",
+    group: "Group",
+    archiveIndex: "ARCHIVE INDEX",
+    entries: "ENTRIES",
+    noSignal: "NO SIGNAL FOUND",
+    emptyHint: "Try another search or collection filter.",
+    signalStable: "SIGNAL INTEGRITY: STABLE",
+    redArchive: "RED ARCHIVE",
+    nowPlaying: "NOW PLAYING",
+    soundArchive: "SOUND ARCHIVE",
+    selectArtifact: "Select an artifact to begin",
+    playbackPosition: "Playback position",
+    pickupDropAudio: "PICKUP / DROP AUDIO",
+    playing: "PLAYING",
+    paused: "PAUSED",
+    actions: { up: "Pick up", down: "Drop" }
+  },
+  cn: {
+    brandSub: "异常广播索引",
+    archiveOnline: "档案在线",
+    collectionLabel: "红色收藏 / 声音组",
+    heroLead: "来自另一边的",
+    heroAccent: "声音。",
+    heroBody: "浏览回收的物品，并试听它们的拾取与放下音效。建议佩戴耳机。",
+    artifacts: "件物品",
+    soundGroups: "个声音组",
+    rarity: "红色",
+    searchLabel: "搜索档案",
+    searchPlaceholder: "搜索档案",
+    clearSearch: "清除搜索",
+    category: "类别",
+    sound: "声音",
+    size: "尺寸",
+    allCategories: "所有类别",
+    allSounds: "所有声音",
+    allSizes: "所有尺寸",
+    group: "组",
+    archiveIndex: "档案索引",
+    entries: "项",
+    noSignal: "未找到信号",
+    emptyHint: "请尝试其他搜索词或筛选条件。",
+    signalStable: "信号完整性：稳定",
+    redArchive: "红色档案",
+    nowPlaying: "正在播放",
+    soundArchive: "声音档案",
+    selectArtifact: "选择一件物品以开始",
+    playbackPosition: "播放位置",
+    pickupDropAudio: "拾取 / 放下音效",
+    playing: "播放中",
+    paused: "已暂停",
+    actions: { up: "拾取", down: "放下" }
+  }
+};
+
+function getLocalizedName(entry, language) {
+  if (typeof entry.name === "string") return entry.name;
+  return entry.name[language] || entry.name.en;
+}
 
 function formatTime(value) {
   const safeValue = Number.isFinite(value) ? Math.max(0, value) : 0;
@@ -48,37 +135,66 @@ function BrandMark() {
   );
 }
 
-function TrackCard({ item, width, active, playing, onPress }) {
+function TrackCard({ item, width, activeAction, playing, onPlay, language, copy }) {
+  const active = Boolean(activeAction);
+  const itemName = getLocalizedName(item, language);
+
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${playing && active ? "Pause" : "Play"} ${item.name}`}
-      onPress={onPress}
-      style={({ pressed, hovered }) => [
-        styles.card,
-        { width },
-        active && styles.cardActive,
-        (pressed || hovered) && styles.cardHovered
-      ]}
-    >
+    <View style={[styles.card, { width }, active && styles.cardActive]}>
       <View style={styles.artworkFrame}>
         <Image source={images[item.id]} style={styles.artwork} resizeMode="cover" />
         <View style={styles.cardShade} />
-        <View style={[styles.playBadge, active && styles.playBadgeActive]}>
-          <Text style={styles.playBadgeText}>{playing && active ? "Ⅱ" : "▶"}</Text>
+        <View style={styles.soundGroupTag}>
+          <Text style={styles.soundGroupTagText}>
+            {language === "en" ? copy.sound.toUpperCase() : copy.sound} {item.audio}
+          </Text>
+        </View>
+        <View style={[styles.soundGroupTag, styles.sizeTag]}>
+          <Text style={styles.soundGroupTagText}>
+            {item.size.width} × {item.size.height}
+          </Text>
         </View>
         {active ? (
           <View style={styles.liveTag}>
             <View style={styles.liveDot} />
-            <Text style={styles.liveText}>{playing ? "PLAYING" : "PAUSED"}</Text>
+            <Text style={styles.liveText}>
+              {playing
+                ? `${copy.actions[activeAction].toUpperCase()} ${copy.playing}`
+                : `${copy.actions[activeAction].toUpperCase()} ${copy.paused}`}
+            </Text>
           </View>
         ) : null}
       </View>
       <View style={styles.cardDetails}>
-        <Text numberOfLines={1} style={styles.cardTitle}>{item.name}</Text>
-        <Text numberOfLines={1} style={styles.cardType}>{typeNames[item.type]}</Text>
+        <Text numberOfLines={1} style={styles.cardTitle}>{itemName}</Text>
+        <Text numberOfLines={1} style={styles.cardType}>{getLocalizedName(typesById[item.type], language)}</Text>
+        <View style={styles.soundActions}>
+          {[
+            { id: "up", label: copy.actions.up.toUpperCase() },
+            { id: "down", label: copy.actions.down.toUpperCase() }
+          ].map((action) => {
+            const isActive = activeAction === action.id;
+            return (
+              <Pressable
+                key={action.id}
+                accessibilityRole="button"
+                accessibilityLabel={`${action.label} ${itemName}`}
+                onPress={() => onPlay(action.id)}
+                style={({ pressed, hovered }) => [
+                  styles.soundAction,
+                  isActive && styles.soundActionActive,
+                  (pressed || hovered) && styles.soundActionHovered
+                ]}
+              >
+                <Text style={[styles.soundActionText, isActive && styles.soundActionTextActive]}>
+                  {isActive && playing ? "Ⅱ " : "▶ "}{action.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
       </View>
-    </Pressable>
+    </View>
   );
 }
 
@@ -103,7 +219,7 @@ function PlayerButton({ label, onPress, primary = false, disabled = false }) {
   );
 }
 
-function NowPlaying({ item, status, onToggle, onPrevious, onNext, onSeek, compact }) {
+function NowPlaying({ item, action, status, onToggle, onPrevious, onNext, onSeek, compact, language, copy }) {
   const [progressWidth, setProgressWidth] = useState(1);
   const duration = status.duration || 0;
   const progress = duration > 0 ? Math.min(1, status.currentTime / duration) : 0;
@@ -120,12 +236,14 @@ function NowPlaying({ item, status, onToggle, onPrevious, onNext, onSeek, compac
             </View>
           )}
           <View style={styles.playerCopy}>
-            <Text style={styles.playerEyebrow}>{item ? "NOW PLAYING" : "SOUND ARCHIVE"}</Text>
+            <Text style={styles.playerEyebrow}>{item ? copy.nowPlaying : copy.soundArchive}</Text>
             <Text numberOfLines={1} style={styles.playerTitle}>
-              {item ? item.name : "Select an artifact to begin"}
+              {item ? getLocalizedName(item, language) : copy.selectArtifact}
             </Text>
             <Text numberOfLines={1} style={styles.playerSubtitle}>
-              {item ? typeNames[item.type] : `${metadata.items.length} recovered recordings`}
+              {item
+                ? `${copy.actions[action]} · ${copy.sound} ${item.audio}`
+                : `${metadata.items.length} ${copy.artifacts.toLowerCase()} · ${soundGroups.length} ${copy.soundGroups.toLowerCase()}`}
             </Text>
           </View>
         </View>
@@ -145,7 +263,7 @@ function NowPlaying({ item, status, onToggle, onPrevious, onNext, onSeek, compac
             <Text style={styles.timeText}>{formatTime(status.currentTime)}</Text>
             <Pressable
               accessibilityRole="adjustable"
-              accessibilityLabel="Playback position"
+              accessibilityLabel={copy.playbackPosition}
               disabled={!item || !duration}
               onLayout={(event) => setProgressWidth(event.nativeEvent.layout.width)}
               onPress={(event) => onSeek((event.nativeEvent.locationX / progressWidth) * duration)}
@@ -161,7 +279,7 @@ function NowPlaying({ item, status, onToggle, onPrevious, onNext, onSeek, compac
         {!compact ? (
           <View style={styles.playerMeta}>
             <Text style={styles.playerMetaIcon}>◖))</Text>
-            <Text style={styles.playerMetaText}>ARCHIVE AUDIO</Text>
+            <Text style={styles.playerMetaText}>{copy.pickupDropAudio}</Text>
           </View>
         ) : null}
       </View>
@@ -171,11 +289,16 @@ function NowPlaying({ item, status, onToggle, onPrevious, onNext, onSeek, compac
 
 export default function App() {
   const { width } = useWindowDimensions();
+  const [language, setLanguage] = useState("en");
   const [query, setQuery] = useState("");
   const [selectedType, setSelectedType] = useState("all");
+  const [selectedSoundGroup, setSelectedSoundGroup] = useState("all");
+  const [selectedSize, setSelectedSize] = useState("all");
   const [currentItem, setCurrentItem] = useState(null);
+  const [currentAction, setCurrentAction] = useState(null);
   const player = useAudioPlayer(null, { updateInterval: 100 });
   const status = useAudioPlayerStatus(player);
+  const copy = translations[language];
 
   const compact = width < 760;
   const pagePadding = width < 520 ? 18 : width < 900 ? 28 : 42;
@@ -188,15 +311,23 @@ export default function App() {
     const normalizedQuery = query.trim().toLowerCase();
     return metadata.items.filter((item) => {
       const matchesType = selectedType === "all" || item.type === selectedType;
+      const matchesSoundGroup = selectedSoundGroup === "all" || item.audio === selectedSoundGroup;
+      const itemSize = `${item.size.width}x${item.size.height}`;
+      const matchesSize = selectedSize === "all" || itemSize === selectedSize;
       const matchesQuery = !normalizedQuery ||
-        item.name.toLowerCase().includes(normalizedQuery) ||
-        typeNames[item.type].toLowerCase().includes(normalizedQuery);
-      return matchesType && matchesQuery;
+        getLocalizedName(item, "en").toLowerCase().includes(normalizedQuery) ||
+        getLocalizedName(item, "cn").toLowerCase().includes(normalizedQuery) ||
+        getLocalizedName(typesById[item.type], "en").toLowerCase().includes(normalizedQuery) ||
+        getLocalizedName(typesById[item.type], "cn").toLowerCase().includes(normalizedQuery) ||
+        `sound ${item.audio}`.includes(normalizedQuery) ||
+        `声音 ${item.audio}`.includes(normalizedQuery) ||
+        itemSize.includes(normalizedQuery);
+      return matchesType && matchesSoundGroup && matchesSize && matchesQuery;
     });
-  }, [query, selectedType]);
+  }, [query, selectedSize, selectedSoundGroup, selectedType]);
 
-  const playItem = (item) => {
-    if (currentItem?.id === item.id) {
+  const playItem = (item, action = "up") => {
+    if (currentItem?.id === item.id && currentAction === action) {
       if (status.playing) {
         player.pause();
       } else {
@@ -209,8 +340,9 @@ export default function App() {
     }
 
     player.pause();
-    player.replace(audio[item.id]);
+    player.replace(sounds[item.audio][action]);
     setCurrentItem(item);
+    setCurrentAction(action);
     player.play();
   };
 
@@ -218,7 +350,7 @@ export default function App() {
     if (!currentItem) return;
     const currentIndex = metadata.items.findIndex((item) => item.id === currentItem.id);
     const nextIndex = (currentIndex + offset + metadata.items.length) % metadata.items.length;
-    playItem(metadata.items[nextIndex]);
+    playItem(metadata.items[nextIndex], currentAction || "up");
   };
 
   return (
@@ -235,12 +367,34 @@ export default function App() {
               <BrandMark />
               <View>
                 <Text style={styles.brandName}>ABI ARCHIVE</Text>
-                <Text style={styles.brandSub}>ANOMALOUS BROADCAST INDEX</Text>
+                <Text style={styles.brandSub}>{copy.brandSub}</Text>
               </View>
             </View>
-            <View style={styles.navStatus}>
-              <View style={styles.statusDot} />
-              <Text style={styles.navStatusText}>ARCHIVE ONLINE</Text>
+            <View style={styles.navActions}>
+              <View style={styles.languageSwitch}>
+                {[{ id: "en", label: "EN" }, { id: "cn", label: "中文" }].map((option) => {
+                  const active = language === option.id;
+                  return (
+                    <Pressable
+                      key={option.id}
+                      accessibilityRole="button"
+                      accessibilityLabel={option.id === "en" ? "English" : "中文"}
+                      onPress={() => setLanguage(option.id)}
+                      style={[styles.languageButton, active && styles.languageButtonActive]}
+                    >
+                      <Text style={[styles.languageButtonText, active && styles.languageButtonTextActive]}>
+                        {option.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+              {!compact ? (
+                <View style={styles.navStatus}>
+                  <View style={styles.statusDot} />
+                  <Text style={styles.navStatusText}>{copy.archiveOnline}</Text>
+                </View>
+              ) : null}
             </View>
           </View>
 
@@ -248,22 +402,19 @@ export default function App() {
             <View style={styles.heroCopy}>
               <View style={styles.eyebrowRow}>
                 <View style={styles.eyebrowLine} />
-                <Text style={styles.eyebrow}>RED COLLECTION / AUDIO RECORDS</Text>
+                <Text style={styles.eyebrow}>{copy.collectionLabel}</Text>
               </View>
               <Text style={[styles.heroTitle, compact && styles.heroTitleCompact]}>
-                Sounds from the{"\n"}<Text style={styles.heroTitleAccent}>other side.</Text>
+                {copy.heroLead}{"\n"}<Text style={styles.heroTitleAccent}>{copy.heroAccent}</Text>
               </Text>
-              <Text style={styles.heroBody}>
-                Browse recovered artifacts and listen to their preserved audio signatures.
-                Headphones recommended.
-              </Text>
+              <Text style={styles.heroBody}>{copy.heroBody}</Text>
             </View>
             {!compact ? (
               <View style={styles.heroCount}>
                 <Text style={styles.heroCountNumber}>{String(metadata.items.length).padStart(2, "0")}</Text>
-                <Text style={styles.heroCountLabel}>RECORDINGS</Text>
+                <Text style={styles.heroCountLabel}>{copy.artifacts}</Text>
                 <View style={styles.heroCountRule} />
-                <Text style={styles.heroCountMeta}>RARITY / {metadata.rarity.toUpperCase()}</Text>
+                <Text style={styles.heroCountMeta}>{soundGroups.length} {copy.soundGroups} / {copy.rarity}</Text>
               </View>
             ) : null}
           </View>
@@ -272,43 +423,93 @@ export default function App() {
             <View style={styles.searchBox}>
               <Text style={styles.searchIcon}>⌕</Text>
               <TextInput
-                accessibilityLabel="Search archive"
+                accessibilityLabel={copy.searchLabel}
                 value={query}
                 onChangeText={setQuery}
-                placeholder="Search the archive"
+                placeholder={copy.searchPlaceholder}
                 placeholderTextColor={palette.faint}
                 selectionColor={palette.red}
                 style={styles.searchInput}
               />
               {query ? (
-                <Pressable accessibilityLabel="Clear search" onPress={() => setQuery("")}>
+                <Pressable accessibilityLabel={copy.clearSearch} onPress={() => setQuery("")}>
                   <Text style={styles.clearSearch}>×</Text>
                 </Pressable>
               ) : null}
             </View>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
-              {[{ id: "all", name: "All" }, ...metadata.types].map((type) => {
-                const active = selectedType === type.id;
-                return (
-                  <Pressable
-                    key={type.id}
-                    onPress={() => setSelectedType(type.id)}
-                    style={({ pressed, hovered }) => [
-                      styles.filterChip,
-                      active && styles.filterChipActive,
-                      (pressed || hovered) && styles.filterChipHovered
-                    ]}
-                  >
-                    <Text style={[styles.filterText, active && styles.filterTextActive]}>{type.name}</Text>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
+            <View style={styles.soundFilterRow}>
+              <Text style={styles.filterLabel}>{copy.category}</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
+                {[{ id: "all", name: copy.allCategories }, ...metadata.types.map((type) => ({
+                  ...type,
+                  name: getLocalizedName(type, language)
+                }))].map((type) => {
+                  const active = selectedType === type.id;
+                  return (
+                    <Pressable
+                      key={type.id}
+                      onPress={() => setSelectedType(type.id)}
+                      style={({ pressed, hovered }) => [
+                        styles.filterChip,
+                        active && styles.filterChipActive,
+                        (pressed || hovered) && styles.filterChipHovered
+                      ]}
+                    >
+                      <Text style={[styles.filterText, active && styles.filterTextActive]}>{type.name}</Text>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            </View>
+            <View style={styles.soundFilterRow}>
+              <Text style={styles.filterLabel}>{copy.sound.toUpperCase()}</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
+                {["all", ...soundGroups].map((group) => {
+                  const active = selectedSoundGroup === group;
+                  return (
+                    <Pressable
+                      key={group}
+                      onPress={() => setSelectedSoundGroup(group)}
+                      style={({ pressed, hovered }) => [
+                        styles.filterChip,
+                        active && styles.filterChipActive,
+                        (pressed || hovered) && styles.filterChipHovered
+                      ]}
+                    >
+                      <Text style={[styles.filterText, active && styles.filterTextActive]}>
+                        {group === "all" ? copy.allSounds : `${copy.sound} ${group}`}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            </View>
+            <View style={styles.soundFilterRow}>
+              <Text style={styles.filterLabel}>{copy.size.toUpperCase()}</Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
+                {[{ id: "all", name: copy.allSizes }, ...itemSizes].map((size) => {
+                  const active = selectedSize === size.id;
+                  return (
+                    <Pressable
+                      key={size.id}
+                      onPress={() => setSelectedSize(size.id)}
+                      style={({ pressed, hovered }) => [
+                        styles.filterChip,
+                        active && styles.filterChipActive,
+                        (pressed || hovered) && styles.filterChipHovered
+                      ]}
+                    >
+                      <Text style={[styles.filterText, active && styles.filterTextActive]}>{size.name}</Text>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            </View>
           </View>
 
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>ARCHIVE INDEX</Text>
-            <Text style={styles.resultCount}>{filteredItems.length} ENTRIES</Text>
+            <Text style={styles.sectionTitle}>{copy.archiveIndex}</Text>
+            <Text style={styles.resultCount}>{filteredItems.length} {copy.entries}</Text>
           </View>
 
           {filteredItems.length ? (
@@ -318,32 +519,37 @@ export default function App() {
                   key={item.id}
                   item={item}
                   width={cardWidth}
-                  active={currentItem?.id === item.id}
+                  activeAction={currentItem?.id === item.id ? currentAction : null}
                   playing={status.playing}
-                  onPress={() => playItem(item)}
+                  onPlay={(action) => playItem(item, action)}
+                  language={language}
+                  copy={copy}
                 />
               ))}
             </View>
           ) : (
             <View style={styles.emptyState}>
               <Text style={styles.emptyGlyph}>∅</Text>
-              <Text style={styles.emptyTitle}>NO SIGNAL FOUND</Text>
-              <Text style={styles.emptyBody}>Try another search or collection filter.</Text>
+              <Text style={styles.emptyTitle}>{copy.noSignal}</Text>
+              <Text style={styles.emptyBody}>{copy.emptyHint}</Text>
             </View>
           )}
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>ABI / RED ARCHIVE / {new Date().getFullYear()}</Text>
-            <Text style={styles.footerText}>SIGNAL INTEGRITY: STABLE</Text>
+            <Text style={styles.footerText}>ABI / {copy.redArchive} / {new Date().getFullYear()}</Text>
+            <Text style={styles.footerText}>{copy.signalStable}</Text>
           </View>
         </View>
       </ScrollView>
 
       <NowPlaying
         item={currentItem}
+        action={currentAction}
         status={status}
         compact={compact}
-        onToggle={() => currentItem && playItem(currentItem)}
+        language={language}
+        copy={copy}
+        onToggle={() => currentItem && playItem(currentItem, currentAction)}
         onPrevious={() => moveTrack(-1)}
         onNext={() => moveTrack(1)}
         onSeek={(seconds) => player.seekTo(seconds)}
@@ -381,6 +587,27 @@ const styles = StyleSheet.create({
   brandMarkRayVertical: { transform: [{ rotate: "90deg" }] },
   brandName: { color: palette.ink, fontSize: 14, fontWeight: "800", letterSpacing: 2.2 },
   brandSub: { color: palette.faint, fontSize: 8, fontWeight: "700", letterSpacing: 1.4, marginTop: 4 },
+  navActions: { flexDirection: "row", alignItems: "center", gap: 18 },
+  languageSwitch: {
+    flexDirection: "row",
+    padding: 2,
+    borderWidth: 1,
+    borderColor: palette.line,
+    borderRadius: 3,
+    backgroundColor: palette.surface
+  },
+  languageButton: {
+    minWidth: 38,
+    height: 27,
+    paddingHorizontal: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 2,
+    cursor: "pointer"
+  },
+  languageButtonActive: { backgroundColor: palette.red },
+  languageButtonText: { color: palette.faint, fontSize: 9, fontWeight: "800", letterSpacing: 0.8 },
+  languageButtonTextActive: { color: "#fff8f2" },
   navStatus: { flexDirection: "row", alignItems: "center", gap: 8 },
   statusDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: palette.red },
   navStatusText: { color: palette.muted, fontSize: 9, fontWeight: "700", letterSpacing: 1.5 },
@@ -432,6 +659,8 @@ const styles = StyleSheet.create({
   },
   clearSearch: { color: palette.muted, fontSize: 25, paddingHorizontal: 5 },
   filters: { gap: 9, paddingRight: 12 },
+  soundFilterRow: { flexDirection: "row", alignItems: "center", gap: 13 },
+  filterLabel: { color: palette.faint, fontSize: 10, fontWeight: "800", letterSpacing: 1.3 },
   filterChip: {
     height: 34,
     paddingHorizontal: 15,
@@ -445,7 +674,7 @@ const styles = StyleSheet.create({
   },
   filterChipActive: { backgroundColor: palette.red, borderColor: palette.red },
   filterChipHovered: { borderColor: palette.red },
-  filterText: { color: palette.muted, fontSize: 10, fontWeight: "700", letterSpacing: 0.8 },
+  filterText: { color: palette.muted, fontSize: 11, fontWeight: "700", letterSpacing: 0.8 },
   filterTextActive: { color: "#fff8f2" },
   sectionHeader: {
     flexDirection: "row",
@@ -465,7 +694,6 @@ const styles = StyleSheet.create({
     borderColor: palette.line,
     borderRadius: 3,
     overflow: "hidden",
-    cursor: "pointer",
     ...Platform.select({
       web: { transitionDuration: "160ms", transitionProperty: "transform, border-color, box-shadow" }
     })
@@ -479,6 +707,21 @@ const styles = StyleSheet.create({
   artworkFrame: { width: "100%", aspectRatio: 255 / 336, backgroundColor: palette.elevated },
   artwork: { width: "100%", height: "100%" },
   cardShade: { position: "absolute", left: 0, right: 0, bottom: 0, height: 88, backgroundColor: "rgba(10,4,4,0.18)" },
+  soundGroupTag: {
+    position: "absolute",
+    right: 10,
+    top: 10,
+    height: 23,
+    paddingHorizontal: 8,
+    borderRadius: 2,
+    backgroundColor: "rgba(12,7,7,0.9)",
+    borderWidth: 1,
+    borderColor: "rgba(228,71,62,0.55)",
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  soundGroupTagText: { color: palette.ink, fontSize: 9, fontWeight: "800", letterSpacing: 1 },
+  sizeTag: { top: 39 },
   playBadge: {
     position: "absolute",
     right: 12,
@@ -511,6 +754,22 @@ const styles = StyleSheet.create({
   cardDetails: { paddingHorizontal: 13, paddingVertical: 14, gap: 6 },
   cardTitle: { color: palette.ink, fontSize: 13, fontWeight: "700" },
   cardType: { color: palette.faint, fontSize: 9, fontWeight: "700", letterSpacing: 0.8, textTransform: "uppercase" },
+  soundActions: { flexDirection: "row", gap: 7, marginTop: 7 },
+  soundAction: {
+    flex: 1,
+    height: 36,
+    borderWidth: 1,
+    borderColor: palette.line,
+    borderRadius: 2,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: palette.elevated,
+    cursor: "pointer"
+  },
+  soundActionActive: { borderColor: palette.red, backgroundColor: palette.redDark },
+  soundActionHovered: { borderColor: palette.red },
+  soundActionText: { color: palette.muted, fontSize: 9, fontWeight: "800", letterSpacing: 0.6 },
+  soundActionTextActive: { color: palette.ink },
   emptyState: { height: 300, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: palette.line },
   emptyGlyph: { color: palette.red, fontSize: 38, fontWeight: "200" },
   emptyTitle: { color: palette.ink, fontSize: 12, fontWeight: "800", letterSpacing: 2, marginTop: 12 },

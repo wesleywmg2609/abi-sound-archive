@@ -3,260 +3,370 @@
   "types": [
     {
       "id": "collectibles",
-      "name": "Collectibles"
+      "name": { "en": "Collectibles", "cn": "收藏品" }
     },
     {
       "id": "electronics",
-      "name": "Electronics"
+      "name": { "en": "Electronics", "cn": "电子产品" }
     },
     {
       "id": "household-items",
-      "name": "Household Items"
+      "name": { "en": "Household Items", "cn": "生活用品" }
     },
     {
       "id": "miscellaneous-medical-item",
-      "name": "Miscellaneous Medical Item"
+      "name": { "en": "Miscellaneous Medical Item", "cn": "医疗杂物" }
     },
     {
       "id": "miscellaneous-military-item",
-      "name": "Miscellaneous Military Item"
+      "name": { "en": "Miscellaneous Military Item", "cn": "军用杂物" }
     },
     {
       "id": "instruments",
-      "name": "Instruments"
+      "name": { "en": "Instruments", "cn": "仪器仪表" }
     }
   ],
   "items": [
     {
       "id": "dawn",
-      "name": "\"Dawn\"",
+      "name": { "en": "\"Dawn\"", "cn": "《黎明》" },
       "type": "collectibles",
-      "image": "assets/images/dawn.png",
-      "audio": "assets/audio/dawn.mp3"
+      "size": {
+        "width": 3,
+        "height": 2
+      },
+      "audio": "22",
+      "image": "assets/images/dawn.png"
     },
     {
       "id": "destiny-gold-clay-tablet",
-      "name": "\"Destiny\" Gold Clay Tablet",
+      "name": { "en": "\"Destiny\" Gold Clay Tablet", "cn": "「天命」金泥板" },
       "type": "collectibles",
-      "image": "assets/images/destiny-gold-clay-tablet.png",
-      "audio": "assets/audio/destiny-gold-clay-tablet.mp3"
+      "size": {
+        "width": 3,
+        "height": 2
+      },
+      "audio": "6",
+      "image": "assets/images/destiny-gold-clay-tablet.png"
     },
     {
       "id": "aerospace-navigator",
-      "name": "Aerospace Navigator",
+      "name": { "en": "Aerospace Navigator", "cn": "航太导航仪" },
       "type": "instruments",
-      "image": "assets/images/aerospace-navigator.png",
-      "audio": "assets/audio/aerospace-navigator.mp3"
+      "size": {
+        "width": 3,
+        "height": 2
+      },
+      "audio": "22",
+      "image": "assets/images/aerospace-navigator.png"
     },
     {
       "id": "amber-heart-of-heaven",
-      "name": "Amber Heart of Heaven",
+      "name": { "en": "Amber Heart of Heaven", "cn": "琥珀天心" },
       "type": "collectibles",
-      "image": "assets/images/amber-heart-of-heaven.png",
-      "audio": "assets/audio/amber-heart-of-heaven.mp3"
+      "size": {
+        "width": 2,
+        "height": 3
+      },
+      "audio": "18",
+      "image": "assets/images/amber-heart-of-heaven.png"
     },
     {
       "id": "ancient-golden-mask-replica",
-      "name": "Ancient Golden Mask Replica",
+      "name": { "en": "Ancient Golden Mask Replica", "cn": "古国黄金面具复制品" },
       "type": "collectibles",
-      "image": "assets/images/ancient-golden-mask-replica.png",
-      "audio": "assets/audio/ancient-golden-mask-replica.mp3"
+      "size": {
+        "width": 2,
+        "height": 3
+      },
+      "audio": "22",
+      "image": "assets/images/ancient-golden-mask-replica.png"
     },
     {
       "id": "antique-teapot",
-      "name": "Antique Teapot",
+      "name": { "en": "Antique Teapot", "cn": "古董茶壶" },
       "type": "collectibles",
-      "image": "assets/images/antique-teapot.png",
-      "audio": "assets/audio/antique-teapot.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "32",
+      "image": "assets/images/antique-teapot.png"
     },
     {
       "id": "capsule-tv",
-      "name": "Capsule TV",
+      "name": { "en": "Capsule TV", "cn": "胶囊电视" },
       "type": "electronics",
-      "image": "assets/images/capsule-tv.png",
-      "audio": "assets/audio/capsule-tv.mp3"
+      "size": {
+        "width": 2,
+        "height": 3
+      },
+      "audio": "18",
+      "image": "assets/images/capsule-tv.png"
     },
     {
       "id": "eeg",
-      "name": "EEG",
+      "name": { "en": "EEG", "cn": "脑电接收装置" },
       "type": "miscellaneous-medical-item",
-      "image": "assets/images/eeg.png",
-      "audio": "assets/audio/eeg.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "22",
+      "image": "assets/images/eeg.png"
     },
     {
       "id": "gem-necklace",
-      "name": "Gem Necklace",
+      "name": { "en": "Gem Necklace", "cn": "宝石项链" },
       "type": "collectibles",
-      "image": "assets/images/gem-necklace.png",
-      "audio": "assets/audio/gem-necklace.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "33",
+      "image": "assets/images/gem-necklace.png"
     },
     {
       "id": "gilded-cage-music-box",
-      "name": "Gilded Cage Music Box",
+      "name": { "en": "Gilded Cage Music Box", "cn": "\"鎏金羽宫\"音乐盒" },
       "type": "collectibles",
-      "image": "assets/images/gilded-cage-music-box.png",
-      "audio": "assets/audio/gilded-cage-music-box.mp3"
+      "size": {
+        "width": 2,
+        "height": 3
+      },
+      "audio": "22",
+      "image": "assets/images/gilded-cage-music-box.png"
     },
     {
       "id": "gold-lion",
-      "name": "Gold Lion",
+      "name": { "en": "Gold Lion", "cn": "金狮雕像" },
       "type": "collectibles",
-      "image": "assets/images/gold-lion.png",
-      "audio": "assets/audio/gold-lion.mp3"
+      "size": {
+        "width": 3,
+        "height": 2
+      },
+      "audio": "28",
+      "image": "assets/images/gold-lion.png"
     },
     {
       "id": "gold-snake",
-      "name": "Gold Snake",
+      "name": { "en": "Gold Snake", "cn": "盘蛇金像" },
       "type": "collectibles",
-      "image": "assets/images/gold-snake.png",
-      "audio": "assets/audio/gold-snake.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "36",
+      "image": "assets/images/gold-snake.png"
     },
     {
       "id": "heavenly-sphere",
-      "name": "Heavenly Sphere",
+      "name": { "en": "Heavenly Sphere", "cn": "承天浑仪" },
       "type": "collectibles",
-      "image": "assets/images/heavenly-sphere.png",
-      "audio": "assets/audio/heavenly-sphere.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "18",
+      "image": "assets/images/heavenly-sphere.png"
     },
     {
       "id": "hefra-egg",
-      "name": "Hefra Egg",
+      "name": { "en": "Hefra Egg", "cn": "赫芙拉彩蛋" },
       "type": "collectibles",
-      "image": "assets/images/hefra-egg.png",
-      "audio": "assets/audio/hefra-egg.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "18",
+      "image": "assets/images/hefra-egg.png"
     },
     {
       "id": "lyre",
-      "name": "Lyre",
+      "name": { "en": "Lyre", "cn": "里拉琴" },
       "type": "collectibles",
-      "image": "assets/images/lyre.png",
-      "audio": "assets/audio/lyre.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "18",
+      "image": "assets/images/lyre.png"
     },
     {
       "id": "majestic-sculpture",
-      "name": "Majestic Sculpture",
+      "name": { "en": "Majestic Sculpture", "cn": "盛宴雕塑" },
       "type": "collectibles",
-      "image": "assets/images/majestic-sculpture.png",
-      "audio": "assets/audio/majestic-sculpture.mp3"
+      "size": {
+        "width": 2,
+        "height": 3
+      },
+      "audio": "36",
+      "image": "assets/images/majestic-sculpture.png"
     },
     {
       "id": "mrid-clamshell-laptop",
-      "name": "MRID Clamshell Laptop",
+      "name": { "en": "MRID Clamshell Laptop", "cn": "MRID翻盖式笔电" },
       "type": "electronics",
-      "image": "assets/images/mrid-clamshell-laptop.png",
-      "audio": "assets/audio/mrid-clamshell-laptop.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "18",
+      "image": "assets/images/mrid-clamshell-laptop.png"
     },
     {
       "id": "northern-stars-amber-drink",
-      "name": "Northern Stars Amber Drink",
+      "name": { "en": "Northern Stars Amber Drink", "cn": "「北境星辰」琥珀珍饮" },
       "type": "household-items",
-      "image": "assets/images/northern-stars-amber-drink.png",
-      "audio": "assets/audio/northern-stars-amber-drink.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "30",
+      "image": "assets/images/northern-stars-amber-drink.png"
     },
     {
       "id": "optoelectronic-hyperspace-model",
-      "name": "Optoelectronic Hyperspace Model",
+      "name": { "en": "Optoelectronic Hyperspace Model", "cn": "超维空间光电模型" },
       "type": "collectibles",
-      "image": "assets/images/optoelectronic-hyperspace-model.png",
-      "audio": "assets/audio/optoelectronic-hyperspace-model.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "36",
+      "image": "assets/images/optoelectronic-hyperspace-model.png"
     },
     {
       "id": "peacock-fan",
-      "name": "Peacock Fan",
+      "name": { "en": "Peacock Fan", "cn": "孔雀羽扇" },
       "type": "collectibles",
-      "image": "assets/images/peacock-fan.png",
-      "audio": "assets/audio/peacock-fan.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "22",
+      "image": "assets/images/peacock-fan.png"
     },
     {
       "id": "phaethons-clock",
-      "name": "Phaethon's Clock",
+      "name": { "en": "Phaethon's Clock", "cn": "法厄同之钟" },
       "type": "collectibles",
-      "image": "assets/images/phaethons-clock.png",
-      "audio": "assets/audio/phaethons-clock.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "22",
+      "image": "assets/images/phaethons-clock.png"
     },
     {
       "id": "prototype-calculation-module",
-      "name": "Prototype Calculation Module",
+      "name": { "en": "Prototype Calculation Module", "cn": "原型电脑验算模组" },
       "type": "electronics",
-      "image": "assets/images/prototype-calculation-module.png",
-      "audio": "assets/audio/prototype-calculation-module.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "18",
+      "image": "assets/images/prototype-calculation-module.png"
     },
     {
       "id": "quantum-2000-toy-robot",
-      "name": "Quantum 2000 Toy Robot",
+      "name": { "en": "Quantum 2000 Toy Robot", "cn": "量子2000玩具机器人" },
       "type": "household-items",
-      "image": "assets/images/quantum-2000-toy-robot.png",
-      "audio": "assets/audio/quantum-2000-toy-robot.mp3"
+      "size": {
+        "width": 2,
+        "height": 3
+      },
+      "audio": "18",
+      "image": "assets/images/quantum-2000-toy-robot.png"
     },
     {
       "id": "real-matrix",
-      "name": "Real Matrix",
+      "name": { "en": "Real Matrix", "cn": "真实矩阵" },
       "type": "collectibles",
-      "image": "assets/images/real-matrix.png",
-      "audio": "assets/audio/real-matrix.mp3"
-    },
-    {
-      "id": "secret-document",
-      "name": "Secret Document",
-      "type": "collectibles",
-      "image": "assets/images/secret-document.png",
-      "audio": "assets/audio/secret-document.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "22",
+      "image": "assets/images/real-matrix.png"
     },
     {
       "id": "skyhook-synchronized-array-mirror",
-      "name": "Skyhook Synchronized Array Mirror",
+      "name": { "en": "Skyhook Synchronized Array Mirror", "cn": "富尔顿回收同步阵列透镜" },
       "type": "collectibles",
-      "image": "assets/images/skyhook-synchronized-array-mirror.png",
-      "audio": "assets/audio/skyhook-synchronized-array-mirror.mp3"
+      "size": {
+        "width": 1,
+        "height": 2
+      },
+      "audio": "18",
+      "image": "assets/images/skyhook-synchronized-array-mirror.png"
     },
     {
       "id": "star-of-kamona-pendant",
-      "name": "Star of Kamona Pendant",
+      "name": { "en": "Star of Kamona Pendant", "cn": "「卡莫纳之星」吊坠" },
       "type": "collectibles",
-      "image": "assets/images/star-of-kamona-pendant.png",
-      "audio": "assets/audio/star-of-kamona-pendant.mp3"
-    },
-    {
-      "id": "t-008-robotic-arm",
-      "name": "T-008 Robotic Arm",
-      "type": "collectibles",
-      "image": "assets/images/t-008-robotic-arm.png",
-      "audio": "assets/audio/t-008-robotic-arm.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "33",
+      "image": "assets/images/star-of-kamona-pendant.png"
     },
     {
       "id": "target-positioning-module",
-      "name": "Target Positioning Module",
+      "name": { "en": "Target Positioning Module", "cn": "目标定位器模组" },
       "type": "miscellaneous-military-item",
-      "image": "assets/images/target-positioning-module.png",
-      "audio": "assets/audio/target-positioning-module.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "10",
+      "image": "assets/images/target-positioning-module.png"
     },
     {
       "id": "three-axis-gyro-controller-prototype",
-      "name": "Three-Axis Gyro Controller Prototype",
+      "name": { "en": "Three-Axis Gyro Controller Prototype", "cn": "三轴陀螺仪控制器原型样品" },
       "type": "instruments",
-      "image": "assets/images/three-axis-gyro-controller-prototype.png",
-      "audio": "assets/audio/three-axis-gyro-controller-prototype.mp3"
+      "size": {
+        "width": 3,
+        "height": 2
+      },
+      "audio": "18",
+      "image": "assets/images/three-axis-gyro-controller-prototype.png"
     },
     {
       "id": "ti-module",
-      "name": "TI Module",
+      "name": { "en": "TI Module", "cn": "热成像模组" },
       "type": "miscellaneous-military-item",
-      "image": "assets/images/ti-module.png",
-      "audio": "assets/audio/ti-module.mp3"
+      "size": {
+        "width": 2,
+        "height": 1
+      },
+      "audio": "10",
+      "image": "assets/images/ti-module.png"
     },
     {
       "id": "vase",
-      "name": "Vase",
+      "name": { "en": "Vase", "cn": "花瓶" },
       "type": "collectibles",
-      "image": "assets/images/vase.png",
-      "audio": "assets/audio/vase.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "30",
+      "image": "assets/images/vase.png"
     },
     {
       "id": "voice-of-civilization-gold-record",
-      "name": "Voice of Civilization Gold Record",
+      "name": { "en": "Voice of Civilization Gold Record", "cn": "文明之声金唱片" },
       "type": "household-items",
-      "image": "assets/images/voice-of-civilization-gold-record.png",
-      "audio": "assets/audio/voice-of-civilization-gold-record.mp3"
+      "size": {
+        "width": 2,
+        "height": 2
+      },
+      "audio": "22",
+      "image": "assets/images/voice-of-civilization-gold-record.png"
     }
   ]
 }

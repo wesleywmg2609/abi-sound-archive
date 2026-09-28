@@ -6,8 +6,9 @@ Browse recovered artifacts and listen to their unique sounds through a responsiv
 
 ## Features
 
-- 33 artifact recordings with matching artwork
-- Search and category filters
+- 31 artifacts with matching artwork
+- Shared pickup and drop audio organized by sound group
+- Search, category, and sound-group filters
 - Play, pause, previous, next, and seek controls
 - Responsive layout for desktop and mobile
 - Built with Expo and React Native Web

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Image,
   Platform,
@@ -71,6 +71,7 @@ const translations = {
     soundArchive: "SOUND ARCHIVE",
     selectArtifact: "Select an artifact to begin",
     playbackPosition: "Playback position",
+    volume: "Volume",
     pickupDropAudio: "PICKUP / DROP AUDIO",
     playing: "PLAYING",
     paused: "PAUSED",
@@ -106,6 +107,7 @@ const translations = {
     soundArchive: "声音档案",
     selectArtifact: "选择一件物品以开始",
     playbackPosition: "播放位置",
+    volume: "音量",
     pickupDropAudio: "拾取 / 放下音效",
     playing: "播放中",
     paused: "已暂停",
@@ -219,10 +221,16 @@ function PlayerButton({ label, onPress, primary = false, disabled = false }) {
   );
 }
 
-function NowPlaying({ item, action, status, onToggle, onPrevious, onNext, onSeek, compact, language, copy }) {
+function NowPlaying({ item, action, status, volume, onToggle, onPrevious, onNext, onSeek, onVolumeChange, compact, language, copy }) {
   const [progressWidth, setProgressWidth] = useState(1);
+  const [volumeWidth, setVolumeWidth] = useState(1);
   const duration = status.duration || 0;
   const progress = duration > 0 ? Math.min(1, status.currentTime / duration) : 0;
+  const volumePercent = Math.round(volume * 100);
+  const updateVolume = (event) => {
+    const nextVolume = Math.max(0, Math.min(1, event.nativeEvent.locationX / volumeWidth));
+    onVolumeChange(nextVolume);
+  };
 
   return (
     <View style={[styles.playerShell, compact && styles.playerShellCompact]}>
@@ -274,6 +282,30 @@ function NowPlaying({ item, action, status, onToggle, onPrevious, onNext, onSeek
             </Pressable>
             <Text style={styles.timeText}>{formatTime(duration)}</Text>
           </View>
+          <View style={styles.volumeRow}>
+            <Text style={styles.volumeLabel}>{copy.volume.toUpperCase()}</Text>
+            <View
+              accessible
+              accessibilityRole="adjustable"
+              accessibilityLabel={copy.volume}
+              accessibilityValue={{ min: 0, max: 100, now: volumePercent, text: `${volumePercent}%` }}
+              accessibilityActions={[{ name: "increment" }, { name: "decrement" }]}
+              onAccessibilityAction={(event) => {
+                const change = event.nativeEvent.actionName === "increment" ? 0.1 : -0.1;
+                onVolumeChange(Math.max(0, Math.min(1, volume + change)));
+              }}
+              onLayout={(event) => setVolumeWidth(event.nativeEvent.layout.width)}
+              onStartShouldSetResponder={() => true}
+              onMoveShouldSetResponder={() => true}
+              onResponderGrant={updateVolume}
+              onResponderMove={updateVolume}
+              style={styles.volumeTrack}
+            >
+              <View style={[styles.volumeFill, { width: `${volumePercent}%` }]} />
+              <View style={[styles.volumeThumb, { left: `${volumePercent}%` }]} />
+            </View>
+            <Text style={styles.volumeValue}>{volumePercent}%</Text>
+          </View>
         </View>
 
         {!compact ? (
@@ -294,11 +326,16 @@ export default function App() {
   const [selectedType, setSelectedType] = useState("all");
   const [selectedSoundGroup, setSelectedSoundGroup] = useState("all");
   const [selectedSize, setSelectedSize] = useState("all");
+  const [volume, setVolume] = useState(0.3);
   const [currentItem, setCurrentItem] = useState(null);
   const [currentAction, setCurrentAction] = useState(null);
   const player = useAudioPlayer(null, { updateInterval: 100 });
   const status = useAudioPlayerStatus(player);
   const copy = translations[language];
+
+  useEffect(() => {
+    player.volume = volume;
+  }, [player, volume]);
 
   const compact = width < 760;
   const pagePadding = width < 520 ? 18 : width < 900 ? 28 : 42;
@@ -341,6 +378,7 @@ export default function App() {
 
     player.pause();
     player.replace(sounds[item.audio][action]);
+    player.volume = volume;
     setCurrentItem(item);
     setCurrentAction(action);
     player.play();
@@ -546,6 +584,7 @@ export default function App() {
         item={currentItem}
         action={currentAction}
         status={status}
+        volume={volume}
         compact={compact}
         language={language}
         copy={copy}
@@ -553,6 +592,7 @@ export default function App() {
         onPrevious={() => moveTrack(-1)}
         onNext={() => moveTrack(1)}
         onSeek={(seconds) => player.seekTo(seconds)}
+        onVolumeChange={setVolume}
       />
     </View>
   );
@@ -834,6 +874,12 @@ const styles = StyleSheet.create({
   timelineFill: { position: "absolute", left: 0, height: 2, backgroundColor: palette.red },
   timelineThumb: { position: "absolute", width: 8, height: 8, marginLeft: -4, borderRadius: 4, backgroundColor: palette.red },
   timeText: { width: 32, color: palette.faint, fontSize: 9, fontVariant: ["tabular-nums"] },
+  volumeRow: { width: 190, alignSelf: "flex-end", flexDirection: "row", alignItems: "center", gap: 9 },
+  volumeLabel: { color: palette.faint, fontSize: 8, fontWeight: "800", letterSpacing: 1.1 },
+  volumeTrack: { flex: 1, height: 16, justifyContent: "center", cursor: "pointer" },
+  volumeFill: { position: "absolute", left: 0, height: 2, backgroundColor: palette.red },
+  volumeThumb: { position: "absolute", width: 8, height: 8, marginLeft: -4, borderRadius: 4, backgroundColor: palette.red },
+  volumeValue: { width: 29, color: palette.muted, fontSize: 9, fontVariant: ["tabular-nums"], textAlign: "right" },
   playerMeta: { width: 160, alignItems: "flex-end" },
   playerMetaIcon: { color: palette.red, fontSize: 15, marginBottom: 7 },
   playerMetaText: { color: palette.faint, fontSize: 8, fontWeight: "800", letterSpacing: 1.3 }
